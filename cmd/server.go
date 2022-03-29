@@ -22,7 +22,7 @@ func runServer() {
 	http.Handle(user.PathPrefix, user.NewHandler())
 
 	server := &http.Server{
-		Addr: ":8000",
+		Addr: ":80",
 	}
 
 	sig := make(chan os.Signal)
