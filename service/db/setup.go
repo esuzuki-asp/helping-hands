@@ -15,7 +15,9 @@ import (
 	fixtures "gopkg.in/testfixtures.v2"
 )
 
-var tableNames = []string{"location", "user_", "item", "user_item", "user_order"}
+var tableNames = []string{"location"}
+
+//, "user_", "item", "user_item", "user_order"}
 
 var DB *sqlx.DB
 
@@ -33,13 +35,13 @@ func init() {
 	}
 	defer func() {
 		if err := recover(); err != nil {
-			RemoveTables(db)
+			//RemoveTables(db)
 			log.Fatal("failed to setup db")
 		}
 	}()
 
-	createTables(db)
-	loadFixtures()
+	//createTables(db)
+	//loadFixtures()
 
 	DB = db
 }
@@ -59,13 +61,17 @@ func createTables(db *sqlx.DB) {
 func loadFixtures() {
 	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 
+	logrus.Println("Try to skip db name check")
 	fixtures.SkipDatabaseNameCheck(true)
+	logrus.Println("Try to get fixtures")
 
 	fixtures, err := fixtures.NewFolder(db, &fixtures.PostgreSQL{}, "./service/db/fixtures")
 	if err != nil {
+		logrus.Println("fail to retrieve fixtures")
 		log.Panic(err)
 	}
 
+	logrus.Println("try to load fixtures")
 	if err = fixtures.Load(); err != nil {
 		log.Panic(err)
 	}

@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"helping-hands/service/db"
+	"fmt"
 	"helping-hands/service/item"
 	"helping-hands/service/user"
 	"net/http"
@@ -22,7 +22,7 @@ func runServer() {
 	http.Handle(user.PathPrefix, user.NewHandler())
 
 	server := &http.Server{
-		Addr: ":8000",
+		Addr: fmt.Sprintf(":%s", os.Getenv("PORT")),
 	}
 
 	sig := make(chan os.Signal)
@@ -38,6 +38,6 @@ func runServer() {
 	<-sig
 	logrus.Info("Starting shutdown")
 	// shutdown procedure
-	db.RemoveTables(db.DB)
+	//db.RemoveTables(db.DB)
 	logrus.Info("Shutdown complete")
 }
