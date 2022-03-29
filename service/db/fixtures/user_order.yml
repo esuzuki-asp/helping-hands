@@ -1,0 +1,13 @@
+- user_id: 2
+  item_id: 1
+  status: 'cart'
+- user_id: 2
+  item_id: 2
+  status: 'pending'
+  pickup_date: '2022-04-07'
+  pickup_time: '17:00'
+- user_id: 2
+  item_id: 3
+  status: 'pending'
+  pickup_date: '2022-04-07'
+  pickup_time: '17:00'

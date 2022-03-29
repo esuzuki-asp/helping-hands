@@ -1,0 +1,8 @@
+- id: 1
+  country: 'Poland'
+  city: 'Krakow'
+  meeting_point: 'Krakow Example Location'
+- id: 2
+  country: 'Poland'
+  city: 'Krakow'
+  meeting_point: 'Krakow Other Example Location'

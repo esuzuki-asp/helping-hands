@@ -1,0 +1,12 @@
+- user_id: 1
+  item_id: 1
+  phone: '111222333'
+  email: 'janedoe32@email.com'
+- user_id: 2
+  item_id: 2
+  phone: '1800800800'
+  email: 'catenthusiast+helpinghands@email.com'
+- user_id: 2
+  item_id: 3
+  phone: '1800800800'
+  email: 'catenthusiast+helpinghands@email.com'

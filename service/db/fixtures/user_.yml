@@ -1,0 +1,24 @@
+- id: 1
+  first_name: 'Jane'
+  last_name: 'Doe'
+  username: 'jane0990'
+  password: 'password'
+  location: 'Krakow, Poland'
+  email: 'janedoe32@email.com'
+  preferred_pickup_location: 1
+- id: 2
+  first_name: 'Jennifer'
+  last_name: 'Smith'
+  username: 'jenjen'
+  password: 'qwerty123'
+  location: 'Krakow, Poland'
+  email: 'jsmith1111@email.com'
+  preferred_dropoff_location: 1
+- id: 3
+  first_name: 'Megan'
+  last_name: 'Lee'
+  username: 'catenthusiast'
+  password: 'catsAreGreat'
+  location: 'Krakow, Poland'
+  email: 'catenthusiast@email.com'
+  preferred_pickup_location: 2
