@@ -3,7 +3,10 @@ package db
 import (
 	"database/sql"
 	"log"
+	"os"
 	"strings"
+
+	"github.com/joho/godotenv"
 
 	"github.com/jmoiron/sqlx"
 
@@ -17,8 +20,13 @@ var tableNames = []string{"location", "user_", "item", "user_item", "user_order"
 var DB *sqlx.DB
 
 func init() {
-	conn := "user=postgres password=postgres host=127.0.0.1 port=7777 sslmode=disable"
-	db, err := sqlx.Open("postgres", conn)
+	if _, err := os.Stat(".env"); err == nil {
+		err = godotenv.Load(".env")
+		if err != nil {
+			logrus.Panic(err)
+		}
+	}
+	db, err := sqlx.Open("postgres", os.Getenv("DATABASE_URL"))
 
 	if err != nil {
 		log.Fatal(err)
@@ -49,8 +57,7 @@ func createTables(db *sqlx.DB) {
 }
 
 func loadFixtures() {
-	conn := "user=postgres password=postgres host=127.0.0.1 port=7777 sslmode=disable"
-	db, err := sql.Open("postgres", conn)
+	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 
 	fixtures.SkipDatabaseNameCheck(true)
 
