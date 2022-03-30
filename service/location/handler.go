@@ -1,4 +1,4 @@
-package item
+package location
 
 import (
 	"encoding/json"
@@ -9,7 +9,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-const PathPrefix = "/item/"
+const PathPrefix = "/location/"
 
 type Handler struct {
 	Service
@@ -21,40 +21,35 @@ func NewHandler() Handler {
 	return Handler{Service: service}
 }
 
-type getItemsRequest struct {
-	Category        string `json:"category"`
-	Type            string `json:"type"`
-	Subtype         string `json:"subtype"`
-	CategoryFilters string `json:"category_filter"`
+type createLocationRequest struct {
+	City         string `json:"city"`
+	Country      string `json:"country"`
+	MeetingPoint string `json:"meeting_point"`
 }
 
-type getItemsResponse struct {
-	Items []Item `json:"items"`
+type createLocationResponse struct {
+	LocationID int64 `json:"location_id"`
 }
 
-type addToCartRequest struct {
-	ItemID string `json:"item_id"`
-	UserID string `json:"item_id"`
-}
-
-type addToCartResponse struct {
-}
-
-type createItemRequest struct {
-	UserID          int64  `json:"user_id"`
-	Email           string `json:"email"`
-	Phone           string `json:"phone"`
-	Category        string `json:"category"`
-	Type            string `json:"type"`
-	Subtype         string `json:"subtype"`
-	CategoryFilters string `json:"category_filter"`
-	AvailableStart  string `json:"available_start"`
-	AvailableEnd    string `json:"available_end"`
-	LocationID      int64  `json:"location_id"`
-}
-
-type createItemResponse struct {
+type getLocationRequest struct {
 	ID int64 `json:"id"`
+}
+
+type getLocationResponse struct {
+	ID           int64  `json:"id"`
+	City         string `json:"city"`
+	Country      string `json:"country"`
+	MeetingPoint string `json:"meeting_point"`
+}
+
+type getLocationsRequest struct {
+	City         string `json:"city"`
+	Country      string `json:"country"`
+	MeetingPoint string `json:"meeting_point"`
+}
+
+type getLocationsResponse struct {
+	Locations []Location
 }
 
 func (h Handler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
@@ -66,14 +61,14 @@ func (h Handler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	case "ping":
 		res.Write([]byte(`pong`))
 		return
-	case "getItems":
-		h.serveGetItems(res, req)
+	case "getLocation":
+		h.serveGetLocation(res, req)
 		return
-	case "addToCart":
-		h.serveAddToCart(res, req)
+	case "getLocations":
+		h.serveGetLocations(res, req)
 		return
-	case "createItem":
-		h.serveCreateItem(res, req)
+	case "createLocation":
+		h.serveCreateLocation(res, req)
 		return
 	default:
 		http.Error(res, "Bad Request", http.StatusBadRequest)
@@ -81,25 +76,25 @@ func (h Handler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (h Handler) serveGetItems(res http.ResponseWriter, req *http.Request) {
-	var getItemsReq getItemsRequest
-	var getItemsRes getItemsResponse
+func (h Handler) serveGetLocation(res http.ResponseWriter, req *http.Request) {
+	var getLocationReq getLocationRequest
+	var getLocationRes getLocationResponse
 
 	decoder := json.NewDecoder(req.Body)
-	err := decoder.Decode(&getItemsReq)
+	err := decoder.Decode(&getLocationReq)
 	if err != nil {
 		logrus.Println(err)
 		http.Error(res, "Bad Request", http.StatusBadRequest)
 		return
 	}
-	err = h.Service.GetItems(&getItemsReq, &getItemsRes)
+	err = h.Service.GetLocation(&getLocationReq, &getLocationRes)
 	if err != nil {
-		logrus.Error("serveGetLocations: ", err)
+		logrus.Error("serveGetLocation: ", err)
 		http.Error(res, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
-	buf, err := json.Marshal(getItemsRes)
+	buf, err := json.Marshal(getLocationRes)
 	if err != nil {
 		http.Error(res, "Internal Server Error", http.StatusInternalServerError)
 		return
@@ -114,25 +109,25 @@ func (h Handler) serveGetItems(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (h Handler) serveAddToCart(res http.ResponseWriter, req *http.Request) {
-	var addToCartReq addToCartRequest
-	var addToCartRes addToCartResponse
+func (h Handler) serveGetLocations(res http.ResponseWriter, req *http.Request) {
+	var getLocationsReq getLocationsRequest
+	var getLocationsRes getLocationsResponse
 
 	decoder := json.NewDecoder(req.Body)
-	err := decoder.Decode(&addToCartReq)
+	err := decoder.Decode(&getLocationsReq)
 	if err != nil {
 		logrus.Println(err)
 		http.Error(res, "Bad Request", http.StatusBadRequest)
 		return
 	}
-	err = h.Service.AddToCart(&addToCartReq, &addToCartRes)
+	err = h.Service.GetLocations(&getLocationsReq, &getLocationsRes)
 	if err != nil {
 		logrus.Error("serveGetLocations: ", err)
 		http.Error(res, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
-	buf, err := json.Marshal(addToCartRes)
+	buf, err := json.Marshal(getLocationsRes)
 	if err != nil {
 		http.Error(res, "Internal Server Error", http.StatusInternalServerError)
 		return
@@ -147,25 +142,25 @@ func (h Handler) serveAddToCart(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (h Handler) serveCreateItem(res http.ResponseWriter, req *http.Request) {
-	var createItemReq createItemRequest
-	var createItemRes createItemResponse
+func (h Handler) serveCreateLocation(res http.ResponseWriter, req *http.Request) {
+	var createLocationReq createLocationRequest
+	var createLocationRes createLocationResponse
 
 	decoder := json.NewDecoder(req.Body)
-	err := decoder.Decode(&createItemReq)
+	err := decoder.Decode(&createLocationReq)
 	if err != nil {
 		logrus.Println(err)
 		http.Error(res, "Bad Request", http.StatusBadRequest)
 		return
 	}
-	err = h.Service.CreateItem(&createItemReq, &createItemRes)
+	err = h.Service.CreateLocation(&createLocationReq, &createLocationRes)
 	if err != nil {
-		logrus.Error("serveGetLocations: ", err)
+		logrus.Error("serveCreateLocation: ", err)
 		http.Error(res, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
-	buf, err := json.Marshal(createItemRes)
+	buf, err := json.Marshal(createLocationRes)
 	if err != nil {
 		http.Error(res, "Internal Server Error", http.StatusInternalServerError)
 		return

@@ -22,7 +22,7 @@ func (r repository) GetCart(userID int64) ([]item.ItemWithLocation, error) {
 	statement := `
 		SELECT
 			i.category,
-			i.type,
+			i._type,
 			i.subtype,
 			i.available_start::text,
 			i.available_end::text,
@@ -52,7 +52,7 @@ func (r repository) GetOrders(userID int64) ([]OrderWithFullDetails, error) {
 			uo.pickup_time::text,
 			i.id,
 			i.category,
-			i.type,
+			i._type,
 			i.subtype,
 			i.tags,
 			i.available_start,
@@ -77,4 +77,25 @@ func (r repository) GetOrders(userID int64) ([]OrderWithFullDetails, error) {
 	`
 	err := r.db.Select(&orders, statement, userID)
 	return orders, err
+}
+
+func (r repository) CreateUser(user User) (int64, error) {
+	var userID int64
+	statement := `
+		INSERT INTO user_ 
+		(username,password,first_name,last_name,location,email,preferred_pickup_location,preferred_dropoff_location)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+		RETURNING ID
+	`
+	err := r.db.Get(&userID, statement,
+		user.Username,
+		user.Password,
+		user.FirstName,
+		user.LastName,
+		user.Location,
+		user.Email,
+		user.PreferredPickupLocation,
+		user.PreferredDropoffLocation,
+	)
+	return userID, err
 }

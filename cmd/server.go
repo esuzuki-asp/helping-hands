@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"helping-hands/service/item"
+	"helping-hands/service/location"
 	"helping-hands/service/user"
 	"net/http"
 	"os"
@@ -20,6 +21,7 @@ func runServer() {
 
 	http.Handle(item.PathPrefix, item.NewHandler())
 	http.Handle(user.PathPrefix, user.NewHandler())
+	http.Handle(location.PathPrefix, location.NewHandler())
 
 	server := &http.Server{
 		Addr: fmt.Sprintf(":%s", os.Getenv("PORT")),

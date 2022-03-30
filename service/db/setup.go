@@ -15,9 +15,7 @@ import (
 	fixtures "gopkg.in/testfixtures.v2"
 )
 
-var tableNames = []string{"location"}
-
-//, "user_", "item", "user_item", "user_order"}
+var tableNames = []string{"location", "user_", "item", "user_item", "user_order"}
 
 var DB *sqlx.DB
 
@@ -40,8 +38,11 @@ func init() {
 		}
 	}()
 
+	//addSequences(db)
+	//useSequences(db)
 	//createTables(db)
 	//loadFixtures()
+	//alterTable(db)
 
 	DB = db
 }
@@ -87,4 +88,39 @@ func RemoveTables(db *sqlx.DB) {
 	}
 	logrus.Info("Delete tables")
 
+}
+
+func addSequences(db *sqlx.DB) {
+	for _, tableName := range []string{"location", "user_", "item"} {
+		_, err := db.Exec("CREATE SEQUENCE " + tableName + "_id_seq")
+		if err != nil {
+			log.Println("failed to add sequences")
+			return
+		}
+	}
+
+}
+
+func useSequences(db *sqlx.DB) {
+	for _, tableName := range []string{"location", "user_", "item"} {
+		_, err := db.Exec("ALTER TABLE " + tableName + " ALTER COLUMN id SET DEFAULT nextval('" + tableName + "_id_seq')")
+		if err != nil {
+			log.Println("failed to add sequences to table " + tableName)
+			return
+		}
+		_, err = db.Exec("ALTER SEQUENCE " + tableName + "_id_seq OWNED BY " + tableName + ".id")
+		if err != nil {
+			log.Println("failed to alter sequence for " + tableName)
+			return
+		}
+	}
+
+}
+
+func alterTable(db *sqlx.DB) {
+	_, err := db.Exec("ALTER TABLE item RENAME COLUMN type TO _type")
+	if err != nil {
+		log.Println("failed to adjust column name")
+		return
+	}
 }
